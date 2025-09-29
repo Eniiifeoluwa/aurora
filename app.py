@@ -19,122 +19,127 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Custom CSS for beautiful UI
 st.markdown("""
 <style>
     /* Import Google Fonts */
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap');
 
+    /* Global Styles */
     * {
         font-family: 'Inter', sans-serif;
     }
 
+    /* Main container */
     .main {
-        background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 50%, #ec4899 100%);
+        background: linear-gradient(135deg, #0f0f0f 0%, #1a1a2e 100%);
+        color: #e0e0e0 !important;
         padding: 2rem;
     }
 
+    /* Sidebar styling */
     [data-testid="stSidebar"] {
-        background: linear-gradient(180deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.95));
-        backdrop-filter: blur(10px);
-        border-right: 1px solid rgba(255, 255, 255, 0.1);
+        background: linear-gradient(180deg, #0d0d0d 0%, #1a1a2e 100%);
+        border-right: 1px solid rgba(255, 0, 128, 0.3);
+    }
+    [data-testid="stSidebar"] h1, [data-testid="stSidebar"] h2, [data-testid="stSidebar"] h3 {
+        color: #9d4edd !important;
     }
 
+    /* Title styling */
     h1 {
         font-size: 3.5rem !important;
         font-weight: 800 !important;
-        background: linear-gradient(90deg, #06b6d4, #3b82f6, #ec4899);
+        background: linear-gradient(135deg, #3b82f6 0%, #a855f7 50%, #ef4444 100%);
         -webkit-background-clip: text !important;
         -webkit-text-fill-color: transparent !important;
         margin-bottom: 1rem !important;
         text-align: center !important;
+        letter-spacing: -0.02em !important;
     }
 
+    /* Card containers */
     .stContainer, div[data-testid="stVerticalBlock"] > div {
-        background: rgba(255, 255, 255, 0.96);
-        border-radius: 24px;
-        padding: 2rem;
-        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
-        backdrop-filter: blur(20px);
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        margin-bottom: 2rem;
+        background: rgba(20, 20, 35, 0.9) !important;
+        border-radius: 20px !important;
+        padding: 2rem !important;
+        box-shadow: 0 0 20px rgba(138, 43, 226, 0.4) !important;
+        border: 1px solid rgba(99, 102, 241, 0.2) !important;
+        margin-bottom: 2rem !important;
     }
 
+    /* Text input */
     .stTextInput > div > div > input {
-        background: rgba(236, 72, 153, 0.05);
-        border: 2px solid rgba(236, 72, 153, 0.25);
-        border-radius: 12px;
-        padding: 14px 18px;
-        font-size: 16px;
-        font-weight: 500;
-        color: #1e293b;
-        transition: all 0.3s ease;
+        background: rgba(30, 30, 60, 0.8) !important;
+        border: 2px solid rgba(99, 102, 241, 0.6) !important;
+        border-radius: 12px !important;
+        padding: 14px 18px !important;
+        font-size: 16px !important;
+        color: #f8fafc !important;
     }
-
     .stTextInput > div > div > input:focus {
-        border-color: rgba(59, 130, 246, 0.6);
-        box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2);
-        background: rgba(236, 72, 153, 0.08);
+        border-color: #a855f7 !important;
+        box-shadow: 0 0 12px rgba(168, 85, 247, 0.5) !important;
     }
 
+    /* Buttons */
     .stButton > button {
-        background: linear-gradient(135deg, #06b6d4, #3b82f6, #ec4899);
-        color: white;
-        border: none;
-        border-radius: 12px;
-        padding: 14px 32px;
-        font-weight: 600;
-        font-size: 16px;
-        text-transform: uppercase;
-        transition: all 0.3s ease;
-        box-shadow: 0 6px 16px rgba(59, 130, 246, 0.3);
+        background: linear-gradient(135deg, #3b82f6 0%, #9333ea 50%, #ef4444 100%) !important;
+        color: white !important;
+        border: none !important;
+        border-radius: 12px !important;
+        padding: 14px 28px !important;
+        font-weight: 600 !important;
+        font-size: 16px !important;
+        transition: all 0.3s ease !important;
+        box-shadow: 0 4px 15px rgba(59, 130, 246, 0.5) !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.6px !important;
     }
-
     .stButton > button:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 10px 24px rgba(236, 72, 153, 0.4);
+        transform: translateY(-2px) scale(1.02) !important;
+        box-shadow: 0 8px 24px rgba(147, 51, 234, 0.7) !important;
     }
 
-    /* Alerts */
-    .stAlert {
-        border-radius: 12px;
-        padding: 1rem 1.5rem;
-    }
-
-    .stSuccess {
-        background: rgba(16, 185, 129, 0.1);
-        border-left: 4px solid #10b981;
-        color: #065f46;
-        font-weight: 600;
-    }
-
-    .stWarning {
-        background: rgba(245, 158, 11, 0.1);
-        border-left: 4px solid #f59e0b;
-        color: #78350f;
-    }
-
-    .stError {
-        background: rgba(239, 68, 68, 0.1);
-        border-left: 4px solid #ef4444;
-        color: #7f1d1d;
-    }
-
-    /* Progress bar */
-    .stProgress > div > div > div > div {
-        background: linear-gradient(90deg, #06b6d4, #3b82f6, #ec4899);
+    /* Expander */
+    .streamlit-expanderHeader {
+        background: rgba(50, 0, 70, 0.5) !important;
+        color: #a855f7 !important;
+        border-radius: 10px !important;
+        font-weight: 600 !important;
     }
 
     /* Scrollbar */
+    ::-webkit-scrollbar {
+        width: 8px;
+    }
     ::-webkit-scrollbar-thumb {
-        background: linear-gradient(135deg, #06b6d4, #3b82f6, #ec4899);
+        background: linear-gradient(135deg, #3b82f6, #a855f7, #ef4444);
         border-radius: 4px;
+    }
+
+    /* Retrieved context blocks */
+    .retrieved-context {
+        background: rgba(99, 102, 241, 0.1);
+        border-left: 3px solid #3b82f6;
+        padding: 1rem;
+        border-radius: 10px;
+        margin-bottom: 1rem;
+        color: #f1f5f9 !important;
+    }
+
+    /* Answers */
+    .answer-box {
+        padding: 2rem;
+        background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(147, 51, 234, 0.15), rgba(239, 68, 68, 0.15));
+        border-radius: 16px;
+        border: 1px solid rgba(99, 102, 241, 0.3);
+        color: #f8fafc !important;
+        line-height: 1.8;
+        font-size: 1.05rem;
     }
 </style>
 """, unsafe_allow_html=True)
 
-
-# Header with subtitle
 st.markdown("<h1>✨ Aurora</h1>", unsafe_allow_html=True)
 st.markdown("""
 <div style='text-align: center; margin-bottom: 3rem;'>
