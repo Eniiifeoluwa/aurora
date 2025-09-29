@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 from rag_pipeline import RAGPipeline
 from utils.loaders import load_text_file, load_pdf, load_image
 from langchain_groq import ChatGroq
-from langchain.schema import HumanMessage, SystemMessage
+from langchain.messages import HumanMessage, SystemMessage
 import time
 
 load_dotenv()

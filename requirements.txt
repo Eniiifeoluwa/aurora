@@ -1,5 +1,7 @@
 streamlit
 langchain>=0.0.350
+langchain-groq>=0.0.6
+langchain-community>=0.0.19
 groq>=0.32.0
 faiss-cpu>=1.7.4
 python-dotenv>=1.0.0
