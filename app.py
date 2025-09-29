@@ -138,7 +138,7 @@ else:
                         st.text(d.page_content[:500] + ("..." if len(d.page_content) > 500 else ""))
 
                 with st.spinner("🤖 Generating answer..."):
-                    llm = ChatGroq(model="mixtral-8x7b-32768", temperature=temperature)
+                    llm = ChatGroq(model="llama-3.1-8b-instant", temperature=temperature)
                     result = llm([
                         SystemMessage(content="You are Aurora, a brilliant AI assistant. Use context. If unknown, say so."),
                         HumanMessage(content=f"Context:\n{context}\n\nQuestion: {query}")
