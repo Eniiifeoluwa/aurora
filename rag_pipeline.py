@@ -1,5 +1,5 @@
-import sys, os
-sys.path.append(os.path.dirname(__file__))
+import sys, os, pathlib
+sys.path.append(str(pathlib.Path(__file__).parent.parent))
 
 from typing import List, Tuple
 from langchain.text_splitter import RecursiveCharacterTextSplitter
