@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 from aurora.rag_pipeline import RAGPipeline
 from aurora.utils.loaders import load_text_file, load_pdf, load_image
 from langchain_groq import ChatGroq
-from langchain.messages import HumanMessage, SystemMessage
+from langchain_core.messages import HumanMessage, SystemMessage
 import time
 
 load_dotenv()
