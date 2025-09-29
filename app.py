@@ -1,8 +1,8 @@
 import sys, os
 sys.path.append(os.path.dirname(__file__))
 import streamlit as st
-GROQ_EMBED_MODEL = st.secrets.get("GROQ_EMBED_MODEL") or os.getenv("GROQ_EMBED_MODEL", "nomic-embed-text-v1.5")
-GROQ_API_KEY = st.secrets.get("GROQ_API_KEY") or os.getenv("GROQ_API_KEY")
+GROQ_EMBED_MODEL = os.getenv("GROQ_EMBED_MODEL", "nomic-embed-text-v1.5")
+GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 if not GROQ_API_KEY:
     st.error("❌ Missing GROQ_API_KEY! Please add it in Streamlit secrets or environment.")
 
