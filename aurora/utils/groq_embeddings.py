@@ -15,7 +15,7 @@ class GroqEmbeddings(Embeddings):
         self.api_key = api_key or os.environ.get("GROQ_API_KEY")
         if not self.api_key:
             raise ValueError("GROQ_API_KEY not set")
-        self.model = model or os.environ.get("GROQ_EMBED_MODEL", "nomic-embed-text-v1.5")
+        self.model = model or os.environ.get("GROQ_EMBED_MODEL", "llama3",)
         self.client = Groq(api_key=self.api_key)
 
     def _call_groq(self, texts: Sequence[str]) -> List[Sequence[float]]:
@@ -24,12 +24,9 @@ class GroqEmbeddings(Embeddings):
         Response objects differ across versions; this handles the common patterns.
         """
         resp = self.client.embeddings.create(input=list(texts), model=self.model)
-        # try several ways to extract embeddings:
-        # 1) resp.data -> list of objects each with 'embedding'
-        # 2) resp['data']
-        # 3) resp.embeddings or resp.embedding
+      
         embeddings = []
-        # Favor typed pydantic models (common in groq client)
+
         try:
             # if resp has attribute data
             data = getattr(resp, "data", None) or resp.get("data") if isinstance(resp, dict) else None
