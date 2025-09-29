@@ -2,7 +2,7 @@ from langchain.document_loaders import TextLoader, PyPDFLoader
 from typing import List
 from langchain.schema import Document
 import io
-from .ocr import image_to_text
+from ocr import image_to_text
 
 def load_text_file(file_bytes: bytes, filename: str) -> List[Document]:
     text = file_bytes.decode("utf-8", errors="ignore")
