@@ -1,8 +1,7 @@
 from PIL import Image
 import pytesseract
 from io import BytesIO
-
-# Fallback
+import numpy as np
 import easyocr
 
 # Initialize EasyOCR reader once
@@ -20,6 +19,7 @@ def image_to_text(file_bytes: bytes) -> str:
         # Try pytesseract first
         return pytesseract.image_to_string(img).strip()
     except pytesseract.TesseractNotFoundError:
-        # Fallback to EasyOCR
-        results = easyocr_reader.readtext(img)
+        # Fallback to EasyOCR (convert PIL → numpy)
+        np_img = np.array(img)
+        results = easyocr_reader.readtext(np_img)
         return " ".join([text for _, text, _ in results]).strip()
