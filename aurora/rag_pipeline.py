@@ -28,7 +28,7 @@ class RAGPipeline:
         metadatas = [d.metadata for d in splitted]
 
         if self.persist_directory and persist:
-            # ✅ Persist to disk
+            # Persist to disk
             self.vectorstore = Chroma.from_texts(
                 texts=texts,
                 embedding=self.embed_model,
@@ -37,7 +37,7 @@ class RAGPipeline:
             )
             self.vectorstore.persist()
         else:
-            # ✅ In-memory only
+            # In-memory only
             self.vectorstore = Chroma.from_texts(
                 texts=texts,
                 embedding=self.embed_model,
@@ -50,14 +50,14 @@ class RAGPipeline:
         if not os.path.exists(self.persist_directory):
             raise ValueError(f"No index found at {self.persist_directory}")
 
-        # ✅ Reload Chroma
+        # Reload Chroma
         self.vectorstore = Chroma(
             persist_directory=self.persist_directory,
             embedding_function=self.embed_model
         )
 
     def query(self, query_text: str, k: int = 4) -> Tuple[str, List[Document]]:
-        # ✅ Auto-load if vectorstore missing
+        # Auto-load if vectorstore missing
         if self.vectorstore is None:
             if self.persist_directory and os.path.exists(self.persist_directory):
                 self.load_index()

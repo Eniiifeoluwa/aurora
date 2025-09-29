@@ -5,18 +5,18 @@ from aurora.utils.loaders import load_text_file, load_pdf, load_image
 from langchain_groq import ChatGroq
 from langchain_core.messages import HumanMessage, SystemMessage
 from langchain.schema import Document
+from PIL import Image
 
-# Ensure project root is importable
 sys.path.append(os.path.dirname(__file__))
 
-# Environment setup
+banner = Image.open("assets/aurora.png")
+
 MISTRAL_EMBED_MODEL = os.getenv("MISTRAL_EMBED_MODEL", "mistral-embed")
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 
 if not GROQ_API_KEY:
     st.error("❌ Missing GROQ_API_KEY! Please add it in Streamlit secrets or environment.")
-
-# Page configuration
+st.image(banner, use_column_width=True)
 st.set_page_config(
     page_title="Aurora — Intelligent RAG Assistant",
     page_icon="✨",
@@ -28,13 +28,11 @@ st.set_page_config(
 PERSIST_DIR = "./chroma_db"
 pipeline = RAGPipeline(persist_directory=PERSIST_DIR)
 
-# Session state
 if "docs_indexed" not in st.session_state:
     st.session_state["docs_indexed"] = False
 if "chat_history" not in st.session_state:
     st.session_state["chat_history"] = []
 
-# Custom styling (dark theme, gradient buttons, clean inputs)
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap');
@@ -50,13 +48,9 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# Title
 st.markdown("<h1>✨ Aurora</h1>", unsafe_allow_html=True)
-st.markdown("<p style='text-align:center; font-size:1.2rem; color:white;'>Intelligent RAG Assistant powered by Groq & LangChain</p>", unsafe_allow_html=True)
+st.markdown("<p style='text-align:center; font-size:1.2rem; color:white;'>Intelligent RAG Assistant built by Olamidipupo Afolabi</p>", unsafe_allow_html=True)
 
-# -------------------------------
-# Sidebar: Document management
-# -------------------------------
 with st.sidebar:
     st.markdown("### 📁 Document Management")
     uploaded = st.file_uploader("Upload your documents", accept_multiple_files=True,
@@ -118,9 +112,6 @@ with st.sidebar:
         time.sleep(0.5)
         st.rerun()
 
-# -------------------------------
-# Main: Query interface
-# -------------------------------
 if not st.session_state["docs_indexed"]:
     st.info("ℹ️ Upload and index documents in the sidebar to start asking questions.")
 else:

@@ -17,7 +17,7 @@ class GroqEmbeddings(Embeddings):
 
         self.model = model or os.getenv("MISTRAL_EMBED_MODEL", "mistral-embed")
 
-        # Initialize the underlying MistralAIEmbeddings client
+
         self.client = MistralAIEmbeddings(
             model=self.model,
             api_key=self.api_key

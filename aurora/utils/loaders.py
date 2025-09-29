@@ -8,7 +8,6 @@ def load_text_file(file_bytes: bytes, filename: str) -> List[Document]:
     return [Document(page_content=text, metadata={"source": filename})]
 
 def load_pdf(file_bytes: bytes, filename: str) -> List[Document]:
-    # write bytes to temp buffer because PyPDFLoader reads from a path
     tmp_path = f"/tmp/{filename}"
     with open(tmp_path, "wb") as f:
         f.write(file_bytes)
