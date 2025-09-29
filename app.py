@@ -1,16 +1,16 @@
 import sys, os
 sys.path.append(os.path.dirname(__file__))
-
 import streamlit as st
-from dotenv import load_dotenv
+GROQ_EMBED_MODEL = st.secrets.get("GROQ_EMBED_MODEL") or os.getenv("GROQ_EMBED_MODEL", "nomic-embed-text-v1.5")
+GROQ_API_KEY = st.secrets.get("GROQ_API_KEY") or os.getenv("GROQ_API_KEY")
+if not GROQ_API_KEY:
+    st.error("❌ Missing GROQ_API_KEY! Please add it in Streamlit secrets or environment.")
+
 from aurora.rag_pipeline import RAGPipeline
 from aurora.utils.loaders import load_text_file, load_pdf, load_image
 from langchain_groq import ChatGroq
 from langchain_core.messages import HumanMessage, SystemMessage
 import time
-
-load_dotenv()
-
 # Page config with custom theme
 st.set_page_config(
     page_title="Aurora — Intelligent RAG Assistant",
@@ -24,236 +24,115 @@ st.markdown("""
 <style>
     /* Import Google Fonts */
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap');
-    
-    /* Global Styles */
+
     * {
         font-family: 'Inter', sans-serif;
     }
-    
-    /* Main container */
+
     .main {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 50%, #ec4899 100%);
         padding: 2rem;
     }
-    
-    /* Sidebar styling */
+
     [data-testid="stSidebar"] {
-        background: linear-gradient(180deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 41, 59, 0.95) 100%);
+        background: linear-gradient(180deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.95));
         backdrop-filter: blur(10px);
         border-right: 1px solid rgba(255, 255, 255, 0.1);
     }
-    
-    [data-testid="stSidebar"] h1, [data-testid="stSidebar"] h2, [data-testid="stSidebar"] h3 {
-        color: #ffffff !important;
-    }
-    
-    /* Title styling */
+
     h1 {
         font-size: 3.5rem !important;
         font-weight: 800 !important;
-        background: linear-gradient(135deg, #fff 0%, #a855f7 50%, #3b82f6 100%);
+        background: linear-gradient(90deg, #06b6d4, #3b82f6, #ec4899);
         -webkit-background-clip: text !important;
         -webkit-text-fill-color: transparent !important;
         margin-bottom: 1rem !important;
         text-align: center !important;
-        letter-spacing: -0.02em !important;
     }
-    
-    /* Card containers */
+
     .stContainer, div[data-testid="stVerticalBlock"] > div {
-        background: rgba(255, 255, 255, 0.95) !important;
-        border-radius: 24px !important;
-        padding: 2rem !important;
-        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
-        backdrop-filter: blur(20px) !important;
-        border: 1px solid rgba(255, 255, 255, 0.2) !important;
-        margin-bottom: 2rem !important;
+        background: rgba(255, 255, 255, 0.96);
+        border-radius: 24px;
+        padding: 2rem;
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        margin-bottom: 2rem;
     }
-    
-    /* Text input styling */
+
     .stTextInput > div > div > input {
-        background: rgba(99, 102, 241, 0.05) !important;
-        border: 2px solid rgba(99, 102, 241, 0.2) !important;
-        border-radius: 12px !important;
-        padding: 16px 20px !important;
-        font-size: 16px !important;
-        font-weight: 500 !important;
-        color: #1e293b !important;
-        transition: all 0.3s ease !important;
+        background: rgba(236, 72, 153, 0.05);
+        border: 2px solid rgba(236, 72, 153, 0.25);
+        border-radius: 12px;
+        padding: 14px 18px;
+        font-size: 16px;
+        font-weight: 500;
+        color: #1e293b;
+        transition: all 0.3s ease;
     }
-    
+
     .stTextInput > div > div > input:focus {
-        border-color: rgba(168, 85, 247, 0.5) !important;
-        box-shadow: 0 0 0 4px rgba(168, 85, 247, 0.1) !important;
-        background: rgba(99, 102, 241, 0.08) !important;
+        border-color: rgba(59, 130, 246, 0.6);
+        box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2);
+        background: rgba(236, 72, 153, 0.08);
     }
-    
-    /* Button styling */
+
     .stButton > button {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
-        color: white !important;
-        border: none !important;
-        border-radius: 12px !important;
-        padding: 14px 32px !important;
-        font-weight: 600 !important;
-        font-size: 16px !important;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4) !important;
-        text-transform: uppercase !important;
-        letter-spacing: 0.5px !important;
+        background: linear-gradient(135deg, #06b6d4, #3b82f6, #ec4899);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        padding: 14px 32px;
+        font-weight: 600;
+        font-size: 16px;
+        text-transform: uppercase;
+        transition: all 0.3s ease;
+        box-shadow: 0 6px 16px rgba(59, 130, 246, 0.3);
     }
-    
+
     .stButton > button:hover {
-        transform: translateY(-2px) !important;
-        box-shadow: 0 8px 24px rgba(102, 126, 234, 0.6) !important;
+        transform: translateY(-2px);
+        box-shadow: 0 10px 24px rgba(236, 72, 153, 0.4);
     }
-    
-    .stButton > button:active {
-        transform: translateY(0) !important;
-    }
-    
-    /* File uploader */
-    [data-testid="stFileUploader"] {
-        background: rgba(99, 102, 241, 0.05) !important;
-        border: 2px dashed rgba(99, 102, 241, 0.3) !important;
-        border-radius: 16px !important;
-        padding: 2rem !important;
-        transition: all 0.3s ease !important;
-    }
-    
-    [data-testid="stFileUploader"]:hover {
-        border-color: rgba(168, 85, 247, 0.5) !important;
-        background: rgba(99, 102, 241, 0.08) !important;
-    }
-    
-    /* Slider */
-    .stSlider > div > div > div {
-        background: linear-gradient(90deg, #667eea 0%, #764ba2 100%) !important;
-    }
-    
-    /* Info boxes */
+
+    /* Alerts */
     .stAlert {
-        background: rgba(59, 130, 246, 0.1) !important;
-        border-left: 4px solid #3b82f6 !important;
-        border-radius: 12px !important;
-        padding: 1rem 1.5rem !important;
+        border-radius: 12px;
+        padding: 1rem 1.5rem;
     }
-    
-    /* Success message */
+
     .stSuccess {
-        background: rgba(34, 197, 94, 0.1) !important;
-        border-left: 4px solid #22c55e !important;
-        border-radius: 12px !important;
-        color: #166534 !important;
-        font-weight: 600 !important;
+        background: rgba(16, 185, 129, 0.1);
+        border-left: 4px solid #10b981;
+        color: #065f46;
+        font-weight: 600;
     }
-    
-    /* Warning message */
+
     .stWarning {
-        background: rgba(251, 146, 60, 0.1) !important;
-        border-left: 4px solid #fb923c !important;
-        border-radius: 12px !important;
+        background: rgba(245, 158, 11, 0.1);
+        border-left: 4px solid #f59e0b;
+        color: #78350f;
     }
-    
-    /* Error message */
+
     .stError {
-        background: rgba(239, 68, 68, 0.1) !important;
-        border-left: 4px solid #ef4444 !important;
-        border-radius: 12px !important;
+        background: rgba(239, 68, 68, 0.1);
+        border-left: 4px solid #ef4444;
+        color: #7f1d1d;
     }
-    
-    /* Markdown content */
-    .stMarkdown {
-        color: #1e293b !important;
-        line-height: 1.7 !important;
-    }
-    
-    /* Subheaders */
-    h2, h3 {
-        color: #1e293b !important;
-        font-weight: 700 !important;
-        margin-top: 2rem !important;
-        margin-bottom: 1rem !important;
-    }
-    
-    /* Spinner */
-    .stSpinner > div {
-        border-top-color: #667eea !important;
-    }
-    
-    /* Divider */
-    hr {
-        border: none !important;
-        height: 2px !important;
-        background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.3), transparent) !important;
-        margin: 2rem 0 !important;
-    }
-    
-    /* Expander */
-    .streamlit-expanderHeader {
-        background: rgba(99, 102, 241, 0.08) !important;
-        border-radius: 12px !important;
-        font-weight: 600 !important;
-        color: #1e293b !important;
-    }
-    
-    /* Code blocks */
-    code {
-        background: rgba(99, 102, 241, 0.1) !important;
-        padding: 2px 8px !important;
-        border-radius: 6px !important;
-        color: #5b21b6 !important;
-        font-weight: 600 !important;
-    }
-    
-    /* Metric containers */
-    [data-testid="stMetricValue"] {
-        font-size: 2.5rem !important;
-        font-weight: 800 !important;
-        color: #667eea !important;
-    }
-    
+
     /* Progress bar */
     .stProgress > div > div > div > div {
-        background: linear-gradient(90deg, #667eea 0%, #764ba2 100%) !important;
+        background: linear-gradient(90deg, #06b6d4, #3b82f6, #ec4899);
     }
-    
+
     /* Scrollbar */
-    ::-webkit-scrollbar {
-        width: 8px;
-        height: 8px;
-    }
-    
-    ::-webkit-scrollbar-track {
-        background: rgba(0, 0, 0, 0.05);
-    }
-    
     ::-webkit-scrollbar-thumb {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #06b6d4, #3b82f6, #ec4899);
         border-radius: 4px;
-    }
-    
-    ::-webkit-scrollbar-thumb:hover {
-        background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
-    }
-    
-    /* Animation */
-    @keyframes fadeInUp {
-        from {
-            opacity: 0;
-            transform: translateY(30px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-    
-    .main > div {
-        animation: fadeInUp 0.6s ease-out;
     }
 </style>
 """, unsafe_allow_html=True)
+
 
 # Header with subtitle
 st.markdown("<h1>✨ Aurora</h1>", unsafe_allow_html=True)
