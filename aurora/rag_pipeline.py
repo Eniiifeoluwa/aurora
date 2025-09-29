@@ -3,9 +3,9 @@ sys.path.append(str(pathlib.Path(__file__).parent.parent))
 
 from typing import List, Tuple
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain.vectorstores import FAISS
+from langchain_community.vectorstores import FAISS
 from langchain.schema import Document
-from .utils.groq_embeddings import GroqEmbeddings
+from aurora.utils.groq_embeddings import GroqEmbeddings
 class RAGPipeline:
     def __init__(self, persist_directory: str = None):
         self.embed_model = GroqEmbeddings()
