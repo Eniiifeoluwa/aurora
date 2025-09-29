@@ -1,66 +1,36 @@
-# aurora/utils/groq_embeddings.py
+# aurora/utils/mistral_embeddings.py
 import os
-from typing import List, Sequence
-from langchain.embeddings.base import Embeddings
-from groq import Groq
-import numpy as np
+from typing import List
+from langchain_core.embeddings import Embeddings
+from langchain_mistralai import MistralAIEmbeddings
+
 
 class GroqEmbeddings(Embeddings):
     """
-    LangChain-compatible embeddings wrapper for Groq embeddings API.
-    Uses groq.Groq client under the hood.
+    LangChain-compatible wrapper for MistralAI embeddings API.
     """
 
     def __init__(self, api_key: str = None, model: str = None):
-        self.api_key = api_key or os.environ.get("GROQ_API_KEY")
+        self.api_key = api_key or os.getenv("MISTRAL_API_KEY")
         if not self.api_key:
-            raise ValueError("GROQ_API_KEY not set")
-        self.model = model or os.environ.get("GROQ_EMBED_MODEL", "llama3",)
-        self.client = Groq(api_key=self.api_key)
+            raise ValueError("MISTRAL_API_KEY not set")
 
-    def _call_groq(self, texts: Sequence[str]) -> List[Sequence[float]]:
-        """
-        Call Groq embeddings endpoint.
-        Response objects differ across versions; this handles the common patterns.
-        """
-        resp = self.client.embeddings.create(input=list(texts), model=self.model)
-      
-        embeddings = []
+        self.model = model or os.getenv("MISTRAL_EMBED_MODEL", "mistral-embed")
 
-        try:
-            # if resp has attribute data
-            data = getattr(resp, "data", None) or resp.get("data") if isinstance(resp, dict) else None
-            if data:
-                for item in data:
-                    # item might be pydantic object or dict
-                    emb = getattr(item, "embedding", None) or item.get("embedding")
-                    embeddings.append(list(emb))
-                return embeddings
-        except Exception:
-            pass
-
-        # fallback: if resp itself is a dict with 'embedding' or 'embeddings'
-        try:
-            if isinstance(resp, dict) and "embedding" in resp:
-                return [resp["embedding"]]
-        except Exception:
-            pass
-
-        # last-ditch: try to read resp.embedding or resp.embeddings
-        try:
-            emb_attr = getattr(resp, "embedding", None) or getattr(resp, "embeddings", None)
-            if emb_attr:
-                if isinstance(emb_attr[0], Sequence):
-                    return [list(e) for e in emb_attr]
-                return [list(emb_attr)]
-        except Exception:
-            pass
-
-        # If none of the above worked, raise so the user can inspect raw response
-        raise RuntimeError(f"Unable to parse embeddings response from Groq: {resp}")
+        # Initialize the underlying MistralAIEmbeddings client
+        self.client = MistralAIEmbeddings(
+            model=self.model,
+            api_key=self.api_key
+        )
 
     def embed_documents(self, texts: List[str]) -> List[List[float]]:
-        return self._call_groq(texts)
+        """
+        Embed multiple documents (list of strings).
+        """
+        return self.client.embed_documents(texts)
 
     def embed_query(self, text: str) -> List[float]:
-        return list(self._call_groq([text])[0])
+        """
+        Embed a single query string.
+        """
+        return self.client.embed_query(text)
