@@ -18,7 +18,7 @@ if not GROQ_API_KEY:
     st.error("❌ Missing GROQ_API_KEY! Please add it in Streamlit secrets or environment.")
 st.image(banner, use_container_width=True)
 st.set_page_config(
-    page_title="Aurora — Intelligent RAG Assistant",
+    page_title="Aurora",
     page_icon="✨",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -49,7 +49,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 st.markdown("<h1>✨ Aurora</h1>", unsafe_allow_html=True)
-st.markdown("<p style='text-align:center; font-size:1.2rem; color:white;'>Intelligent RAG Assistant built by Olamidipupo Afolabi</p>", unsafe_allow_html=True)
+st.markdown("<p style='text-align:center; font-size:1.2rem; color:white;'>Intelligent AI Assistant built by Olamidipupo Afolabi</p>", unsafe_allow_html=True)
 
 with st.sidebar:
     st.markdown("### 📁 Document Management")
