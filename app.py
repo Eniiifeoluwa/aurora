@@ -11,13 +11,22 @@ from aurora.utils.loaders import load_text_file, load_pdf, load_image
 from langchain_groq import ChatGroq
 from langchain_core.messages import HumanMessage, SystemMessage
 import time
-# Page config with custom theme
+# Page config
 st.set_page_config(
     page_title="Aurora — Intelligent RAG Assistant",
     page_icon="✨",
     layout="wide",
     initial_sidebar_state="expanded"
 )
+
+# 👉 persist dir now Chroma
+PERSIST_DIR = "./chroma_store"
+pipeline = RAGPipeline(persist_directory=PERSIST_DIR)
+
+if "docs_indexed" not in st.session_state:
+    st.session_state["docs_indexed"] = False
+if "chat_history" not in st.session_state:
+    st.session_state["chat_history"] = []
 
 st.markdown("""
 <style>
@@ -149,27 +158,19 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# Instantiate pipeline
-PERSIST_DIR = "./faiss_index"
-pipeline = RAGPipeline(persist_directory=PERSIST_DIR)
 
-if "docs_indexed" not in st.session_state:
-    st.session_state["docs_indexed"] = False
-if "chat_history" not in st.session_state:
-    st.session_state["chat_history"] = []
-
-# Sidebar
+# Sidebar — Document management
 with st.sidebar:
     st.markdown("### 📁 Document Management")
     st.markdown("---")
-    
+
     uploaded = st.file_uploader(
         "Upload your documents",
         accept_multiple_files=True,
         type=['txt', 'pdf', 'png', 'jpg', 'jpeg'],
         help="Supported formats: TXT, PDF, PNG, JPG, JPEG"
     )
-    
+
     col1, col2 = st.columns(2)
     with col1:
         if st.button("📥 Index Files", use_container_width=True):
@@ -177,11 +178,11 @@ with st.sidebar:
                 with st.spinner("Processing documents..."):
                     all_docs = []
                     progress_bar = st.progress(0)
-                    
+
                     for idx, f in enumerate(uploaded):
                         name = f.name
                         b = f.read()
-                        
+
                         if name.lower().endswith(".txt"):
                             docs = load_text_file(b, name)
                         elif name.lower().endswith(".pdf"):
@@ -191,10 +192,10 @@ with st.sidebar:
                         else:
                             st.warning(f"⚠️ Unsupported: {name}")
                             continue
-                        
+
                         all_docs.extend(docs)
                         progress_bar.progress((idx + 1) / len(uploaded))
-                    
+
                     if all_docs:
                         pipeline.index_documents(all_docs, persist=True)
                         st.session_state["docs_indexed"] = True
@@ -203,7 +204,7 @@ with st.sidebar:
                         st.rerun()
             else:
                 st.warning("⚠️ Please upload files first")
-    
+
     with col2:
         if st.button("💾 Load Index", use_container_width=True):
             try:
@@ -215,7 +216,6 @@ with st.sidebar:
                     st.rerun()
             except Exception as e:
                 st.error(f"❌ Failed: {str(e)[:50]}")
-    
     st.markdown("---")
     
     # Status indicator
@@ -350,12 +350,11 @@ Provide a clear, well-structured answer. Use markdown formatting for readability
                 st.markdown(f"**Answer:** {chat['answer']}")
                 st.caption(f"📊 Sources used: {chat['sources']}")
 
-# Footer
 st.markdown("---")
 st.markdown("""
 <div style='text-align: center; padding: 2rem 0;'>
     <p style='color: white; font-size: 0.9rem; text-shadow: 0 1px 2px rgba(0,0,0,0.3);'>
-        Powered by <strong>Groq</strong> • <strong>LangChain</strong> • <strong>FAISS</strong>
+        Powered by <strong>Groq</strong> • <strong>LangChain</strong> • <strong>Chroma</strong>
     </p>
 </div>
 """, unsafe_allow_html=True)
