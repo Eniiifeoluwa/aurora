@@ -131,7 +131,7 @@ else:
                 with st.spinner("🤖 Generating answer..."):
                     llm = ChatGroq(model="llama-3.1-8b-instant", temperature=temperature)
                     result = llm([
-                        SystemMessage(content="You are Aurora, a brilliant AI assistant built by Akinola Olamidipupo Afolabi. Use context. If unknown, say so."),
+                        SystemMessage(content="You are Aurora, a brilliant AI assistant built by Akinola Olamidipupo Afolabi, a reputable AI Engineer. Use context. If unknown, say so."),
                         HumanMessage(content=f"Context:\n{context}\n\nQuestion: {query}")
                     ])
 
