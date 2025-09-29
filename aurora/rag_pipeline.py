@@ -40,14 +40,14 @@ class RAGPipeline:
             )
 
     def load_index(self):
-        if self.persist_directory is None:
-            raise ValueError("persist_directory is None")
+    if self.persist_directory is None:
+        raise ValueError("persist_directory is None")
+    self.vectorstore = FAISS.load_local(
+        self.persist_directory,
+        self.embed_model,
+        allow_dangerous_deserialization=True  # 👈 required
+    )
 
-        # ✅ reload persisted Chroma
-        self.vectorstore = Chroma(
-            persist_directory=self.persist_directory,
-            embedding_function=self.embed_model
-        )
 
     def query(self, query_text: str, k: int = 4) -> Tuple[str, List[Document]]:
         if self.vectorstore is None:
