@@ -1,13 +1,11 @@
-# aurora/rag_pipeline.py
-import os
 import sys, os
-sys.path.append(os.path.join(os.path.dirname(__file__), "utils"))
+sys.path.append(os.path.dirname(__file__))
 
 from typing import List, Tuple
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.vectorstores import FAISS
 from langchain.schema import Document
-from groq_embeddings import GroqEmbeddings
+from utils.groq_embeddings import GroqEmbeddings
 class RAGPipeline:
     def __init__(self, persist_directory: str = None):
         self.embed_model = GroqEmbeddings()
