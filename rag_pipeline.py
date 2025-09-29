@@ -7,7 +7,7 @@ from typing import List, Tuple
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.vectorstores import FAISS
 from langchain.schema import Document
-from .utils.groq_embeddings import GroqEmbeddings
+from groq_embeddings import GroqEmbeddings
 class RAGPipeline:
     def __init__(self, persist_directory: str = None):
         self.embed_model = GroqEmbeddings()
