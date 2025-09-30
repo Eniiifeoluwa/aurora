@@ -99,7 +99,7 @@ with st.sidebar:
         st.warning("🟡 No Documents Indexed")
     st.markdown("---")
     st.markdown("### ⚙️ Settings")
-    k = st.slider("Retrieved chunks (k)", 1, 10, 5)
+    k = st.slider("Retrieved chunks (k)", 1, 10, 4)
     temperature = st.slider("Response creativity", 0.0, 1.0, 0.0, step=0.1)
     if st.button("🗑️ Clear History", use_container_width=True):
         st.session_state.chat_history = []
