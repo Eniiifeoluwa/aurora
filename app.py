@@ -11,8 +11,10 @@ MISTRAL_EMBED_MODEL = os.getenv("MISTRAL_EMBED_MODEL", "mistral-embed")
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 if not GROQ_API_KEY:
     st.error("❌ Missing GROQ_API_KEY!")
+banner = Image.open("assets/aurora.png")
+st.image(banner, use_container_width=True)
 
-st.set_page_config(page_title="Aurora — Intelligent RAG Assistant", page_icon="✨", layout="wide", initial_sidebar_state="expanded")
+st.set_page_config(page_title="Aurora — Intelligent AI Assistant", page_icon="✨", layout="wide", initial_sidebar_state="expanded")
 
 PERSIST_DIR = "./chroma_db"
 
@@ -42,7 +44,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 st.markdown("<h1>✨ Aurora</h1>", unsafe_allow_html=True)
-st.markdown("<p style='text-align:center; font-size:1.2rem; color:white;'>Intelligent RAG Assistant powered by Groq & LangChain</p>", unsafe_allow_html=True)
+st.markdown("<p style='text-align:center; font-size:1.2rem; color:white;'>An Intelligent AI Assistant built by Akinola Afolabi</p>", unsafe_allow_html=True)
 
 with st.sidebar:
     st.markdown("### 📁 Document Management")
@@ -123,8 +125,8 @@ else:
                 for i, d in enumerate(docs, 1):
                     st.markdown(f"**Chunk {i} — {d.metadata.get('source','unknown')}**")
                     st.text(d.page_content[:500] + ("..." if len(d.page_content) > 500 else ""))
-            llm = ChatGroq(model="mixtral-8x7b-32768", temperature=temperature)
-            result = llm([SystemMessage(content="You are Aurora, a brilliant AI assistant. Use context. If unknown, say so."), HumanMessage(content=f"Context:\n{context}\n\nQuestion: {query}")])
+            llm = ChatGroq(model="llama-3.1-8b-instant", temperature=temperature)
+            result = llm([SystemMessage(content="You are Aurora, a brilliant AI assistant built by Olamidipupo, Akinola, Afolabi (You can use any of these names), a reputable AI Engineer. Use context. If unknown, say so."), HumanMessage(content=f"Context:\n{context}\n\nQuestion: {query}")])
             st.markdown("### ✨ Answer")
             st.markdown(f"<div style='padding:1.5rem;background:rgba(99,102,241,0.1);border-radius:12px'>{result.content}</div>", unsafe_allow_html=True)
             st.session_state.chat_history.append({"question": query, "answer": result.content, "sources": len(docs)})
