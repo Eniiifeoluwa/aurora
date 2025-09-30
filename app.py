@@ -4,7 +4,7 @@ from aurora.rag_pipeline import RAGPipeline
 from aurora.utils.loaders import load_text_file, load_pdf, load_image
 from langchain_groq import ChatGroq
 from langchain_core.messages import HumanMessage, SystemMessage
-
+from PIL import Image
 sys.path.append(os.path.dirname(__file__))
 
 MISTRAL_EMBED_MODEL = os.getenv("MISTRAL_EMBED_MODEL", "mistral-embed")
