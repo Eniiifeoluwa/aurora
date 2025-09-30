@@ -10,7 +10,7 @@ class RAGPipeline:
         self.embed_model = GroqEmbeddings()
         self.text_splitter = RecursiveCharacterTextSplitter(
             chunk_size=600,
-            chunk_overlap=100
+            chunk_overlap=150
         )
         self.persist_directory = persist_directory
         self.vectorstore = None

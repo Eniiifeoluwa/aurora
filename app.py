@@ -99,7 +99,7 @@ with st.sidebar:
         st.warning("🟡 No Documents Indexed")
     st.markdown("---")
     st.markdown("### ⚙️ Settings")
-    k = st.slider("Retrieved chunks (k)", 1, 10, 4)
+    k = st.slider("Retrieved chunks (k)", 1, 10, 5)
     temperature = st.slider("Response creativity", 0.0, 1.0, 0.0, step=0.1)
     if st.button("🗑️ Clear History", use_container_width=True):
         st.session_state.chat_history = []
@@ -126,7 +126,7 @@ else:
                     st.markdown(f"**Chunk {i} — {d.metadata.get('source','unknown')}**")
                     st.text(d.page_content[:500] + ("..." if len(d.page_content) > 500 else ""))
             llm = ChatGroq(model="llama-3.1-8b-instant", temperature=temperature)
-            result = llm([SystemMessage(content="You are Aurora, a brilliant AI assistant built by Olamidipupo, Akinola, Afolabi (You can use any of these names), a reputable AI Engineer. Use context. If unknown, say so."), HumanMessage(content=f"Context:\n{context}\n\nQuestion: {query}")])
+            result = llm([SystemMessage(content="You are Aurora, a brilliant AI assistant built by Akinola Olamidipupo Afolabi, a reputable AI Engineer. Use context. If unknown, say so."), HumanMessage(content=f"Context:\n{context}\n\nQuestion: {query}")])
             st.markdown("### ✨ Answer")
             st.markdown(f"<div style='padding:1.5rem;background:rgba(99,102,241,0.1);border-radius:12px'>{result.content}</div>", unsafe_allow_html=True)
             st.session_state.chat_history.append({"question": query, "answer": result.content, "sources": len(docs)})
