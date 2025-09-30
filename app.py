@@ -12,7 +12,6 @@ GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 if not GROQ_API_KEY:
     st.error("❌ Missing GROQ_API_KEY!")
 banner = Image.open("assets/aurora.png")
-st.image(banner, use_container_width=True)
 
 st.set_page_config(page_title="Aurora — Intelligent AI Assistant", page_icon="✨", layout="wide", initial_sidebar_state="expanded")
 
@@ -44,6 +43,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 st.markdown("<h1>✨ Aurora</h1>", unsafe_allow_html=True)
+st.image(banner, use_container_width=True)
 st.markdown("<p style='text-align:center; font-size:1.2rem; color:white;'>An Intelligent AI Assistant built by Akinola Afolabi</p>", unsafe_allow_html=True)
 
 with st.sidebar:
