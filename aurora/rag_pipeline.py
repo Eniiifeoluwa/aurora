@@ -1,5 +1,5 @@
 from langchain_community.vectorstores import Chroma
-from langchain.schema import Document
+from langchain_core.documents import Document
 from aurora.utils.groq_embeddings import GroqEmbeddings
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from typing import List, Tuple
