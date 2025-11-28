@@ -14,3 +14,4 @@ pathlib
 easyocr
 langchain-mistralai>=0.0.3
 langchain-chroma
+langchain-text-splitters
