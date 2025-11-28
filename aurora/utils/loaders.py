@@ -1,6 +1,6 @@
 from langchain_community.document_loaders import TextLoader, PyPDFLoader
 from typing import List
-from langchain.schema import Document
+from langchain_core.documents import Document
 import io
 from aurora.utils.ocr import image_to_text
 def load_text_file(file_bytes: bytes, filename: str) -> List[Document]:
