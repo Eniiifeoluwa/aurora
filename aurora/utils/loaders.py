@@ -1,4 +1,4 @@
-from langchain.document_loaders import TextLoader, PyPDFLoader
+from langchain_community.document_loaders import TextLoader, PyPDFLoader
 from typing import List
 from langchain.schema import Document
 import io
